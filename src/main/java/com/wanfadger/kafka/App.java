@@ -37,7 +37,7 @@ public class App
          key optional (2nd parameter)
          message compulsory (3rd parameter)
          */
-        final ProducerRecord<String , String> record = new ProducerRecord<>("myfirst" , "publishing from java");
+        final ProducerRecord<String , String> record = new ProducerRecord<>("myfirst" , "publishing from java b y wanfadger");
 
         kafkaProducer.send(record, new Callback() {
             @Override
