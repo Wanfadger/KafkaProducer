@@ -1,11 +1,12 @@
 package com.wanfadger.kafka;
 
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
+
 
 /**
  * Hello world!
@@ -36,9 +37,25 @@ public class App
          key optional (2nd parameter)
          message compulsory (3rd parameter)
          */
-        ProducerRecord<String , String> record = new ProducerRecord<>("myfirst" , "publishing from java");
+        final ProducerRecord<String , String> record = new ProducerRecord<>("myfirst" , "publishing from java");
 
-        kafkaProducer.send(record);
+        kafkaProducer.send(record, new Callback() {
+            @Override
+            public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+
+                Logger logger = LoggerFactory.getLogger(App.class);
+                if (e==null) {
+                    logger.info(
+                            "topic "+recordMetadata.topic()
+                                    +" partition "+recordMetadata.partition()
+                            +" offset "+recordMetadata.offset()
+                            +" timestamp "+recordMetadata.timestamp()
+                    );
+                }else{
+                    logger.error("cannot produce , getting error "+e);
+                }
+            }
+        });
         kafkaProducer.flush();
         kafkaProducer.close();
 
